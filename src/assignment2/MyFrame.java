@@ -16,27 +16,26 @@ import se.his.it401g.todo.StudyTask;
 import se.his.it401g.todo.Task;
 
 public class MyFrame extends JFrame implements ActionListener{
-	JButton sButton, hButton, cButton;
+	JButton studyButton, homeButton, cButton;
 	
 	//Panelen är global så att när man skapar med knapparna så läggs de här.
-	JPanel buttonList, homePanel, studyPanel;
+	JPanel buttonList, taskPanel;
 
 
 	MyFrame() {
 		
 		//Varje knapp skapas här.
 		JPanel buttonList = new JPanel();
-		sButton = new JButton("studyTask");
-		sButton.setPreferredSize(new Dimension(150,50));
-		sButton.addActionListener(this);
-		hButton = new JButton("HomeTask");
-		hButton.setPreferredSize(new Dimension(150,50));
-		hButton.addActionListener(this);
+		studyButton = new JButton("studyTask");
+		studyButton.setPreferredSize(new Dimension(150,50));
+		studyButton.addActionListener(this);
+		homeButton = new JButton("HomeTask");
+		homeButton.setPreferredSize(new Dimension(150,50));
+		homeButton.addActionListener(this);
 		cButton = new JButton("CustomTask");
 		cButton.setPreferredSize(new Dimension(150,50));
-
-		homePanel = new JPanel();
-		studyPanel = new JPanel();
+		
+		taskPanel = new JPanel();
 		this.setTitle("Todos");
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setLayout(new BorderLayout());
@@ -44,39 +43,38 @@ public class MyFrame extends JFrame implements ActionListener{
 		this.setVisible(true);
 		
 		//Lägger till 3 knappar i buttonList Panelen
-		buttonList.add(sButton);
-		buttonList.add(hButton);
+		buttonList.add(studyButton);
+		buttonList.add(homeButton);
 		buttonList.add(cButton);
 		
 		
 		//vart i framen saken ska ligga i, north är högst upp.
 		this.add(buttonList, BorderLayout.NORTH);
-		this.add(homePanel, BorderLayout.CENTER);
-		this.add(studyPanel, BorderLayout.CENTER);
+		this.add(taskPanel);
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if(e.getSource()==sButton) {
+		if(e.getSource()==studyButton) {
 			
 			//När knappen trycks så skapas en ny instans av task
 			Task studyTask = new StudyTask();
 			
 			//Lägger till i panelen (Som en div)
-			studyPanel.add(studyTask.getGuiComponent());
+			taskPanel.add(studyTask.getGuiComponent());
 			//Validerar och renderar om panelen
 			
-			studyPanel.validate();
-			studyPanel.repaint();
+			taskPanel.validate();
+			taskPanel.repaint();
 		}	
-		if(e.getSource()==hButton) {
+		if(e.getSource()==homeButton) {
 			System.out.print("HUYG(AHY(UI)GFHAUIOSJDFHBAUIO=");
 			
-			//Samma som för sButton
+			//Samma som för studyButton
 			Task task = new HomeTask();
-			homePanel.add(task.getGuiComponent());
-			homePanel.validate();
-			homePanel.repaint();
+			taskPanel.add(task.getGuiComponent());
+			taskPanel.validate();
+			taskPanel.repaint();
 		}
 	}
 	
