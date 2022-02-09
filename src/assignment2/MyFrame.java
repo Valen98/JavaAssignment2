@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -16,9 +17,14 @@ import se.his.it401g.todo.Task;
 
 public class MyFrame extends JFrame implements ActionListener{
 	JButton sButton, hButton, cButton;
-	JPanel p;
+	
+	//Panelen är global så att när man skapar med knapparna så läggs de här.
+	JPanel buttonList, homePanel, studyPanel;
+
 
 	MyFrame() {
+		
+		//Varje knapp skapas här.
 		JPanel buttonList = new JPanel();
 		sButton = new JButton("studyTask");
 		sButton.setPreferredSize(new Dimension(150,50));
@@ -29,7 +35,8 @@ public class MyFrame extends JFrame implements ActionListener{
 		cButton = new JButton("CustomTask");
 		cButton.setPreferredSize(new Dimension(150,50));
 
-		p = new JPanel();
+		homePanel = new JPanel();
+		studyPanel = new JPanel();
 		this.setTitle("Todos");
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setLayout(new BorderLayout());
@@ -44,32 +51,33 @@ public class MyFrame extends JFrame implements ActionListener{
 		
 		//vart i framen saken ska ligga i, north är högst upp.
 		this.add(buttonList, BorderLayout.NORTH);
-		this.add(p);
+		this.add(homePanel, BorderLayout.CENTER);
+		this.add(studyPanel, BorderLayout.CENTER);
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource()==sButton) {
-			System.out.print("BRUTYH(ABDU)OB");
 			
 			//När knappen trycks så skapas en ny instans av task
 			Task studyTask = new StudyTask();
 			
 			//Lägger till i panelen (Som en div)
-			p.add(studyTask.getGuiComponent());
+			studyPanel.add(studyTask.getGuiComponent());
 			//Validerar och renderar om panelen
 			
-			p.validate();
-			p.repaint();
+			studyPanel.validate();
+			studyPanel.repaint();
 		}	
 		if(e.getSource()==hButton) {
 			System.out.print("HUYG(AHY(UI)GFHAUIOSJDFHBAUIO=");
 			
 			//Samma som för sButton
 			Task task = new HomeTask();
-			p.add(task.getGuiComponent());
-			p.validate();
-			p.repaint();
+			homePanel.add(task.getGuiComponent());
+			homePanel.validate();
+			homePanel.repaint();
 		}
 	}
+	
 }
