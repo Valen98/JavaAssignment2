@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -21,6 +22,7 @@ public class MyFrame extends JFrame implements ActionListener{
 	//Panelen är global så att när man skapar med knapparna så läggs de här.
 	JPanel buttonList, taskPanel;
 
+	ArrayList<Task> taskSorter = new ArrayList<Task>();
 
 	MyFrame() {
 		
@@ -47,10 +49,12 @@ public class MyFrame extends JFrame implements ActionListener{
 		buttonList.add(homeButton);
 		buttonList.add(cButton);
 		
-		
 		//vart i framen saken ska ligga i, north är högst upp.
 		this.add(buttonList, BorderLayout.NORTH);
 		this.add(taskPanel);
+		
+		
+		
 	}
 
 	@Override
@@ -60,22 +64,37 @@ public class MyFrame extends JFrame implements ActionListener{
 			//När knappen trycks så skapas en ny instans av task
 			Task studyTask = new StudyTask();
 			
-			//Lägger till i panelen (Som en div)
-			taskPanel.add(studyTask.getGuiComponent());
+			taskSorter.add(studyTask);
+	
 			//Validerar och renderar om panelen
-			
+			System.out.println(taskSorter);
+			sortTasks();
 			taskPanel.validate();
 			taskPanel.repaint();
 		}	
 		if(e.getSource()==homeButton) {
 			System.out.print("HUYG(AHY(UI)GFHAUIOSJDFHBAUIO=");
-			
+	
 			//Samma som för studyButton
-			Task task = new HomeTask();
-			taskPanel.add(task.getGuiComponent());
+			Task homeTask = new HomeTask();
+			taskSorter.add(homeTask);
+			sortTasks();
 			taskPanel.validate();
 			taskPanel.repaint();
 		}
 	}
 	
+	
+	public void sortTasks( ) {
+		Collections.sort(taskSorter, new Comparator<Task>() {
+			public int compare(Task v1, Task v2) {
+				return v1.getTaskType().compareTo(v2.getTaskType());
+			}
+		});
+	
+		for(int i = 0; i < taskSorter.size(); i++) {
+			taskPanel.add(taskSorter.get(i).getGuiComponent());
+		}
+	}
+
 }
