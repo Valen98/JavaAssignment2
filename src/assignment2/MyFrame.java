@@ -26,16 +26,21 @@ public class MyFrame extends JFrame implements ActionListener{
 
 	MyFrame() {
 		
-		//Varje knapp skapas här.
-		JPanel buttonList = new JPanel();
-		studyButton = new JButton("studyTask");
-		studyButton.setPreferredSize(new Dimension(150,50));
-		studyButton.addActionListener(this);
-		homeButton = new JButton("HomeTask");
-		homeButton.setPreferredSize(new Dimension(150,50));
-		homeButton.addActionListener(this);
+		//Study Button
+		studyButton = studyButton();
+		
+		//HomeButton
+		homeButton = homeButton();
+		
+		//Custom Button
 		cButton = new JButton("CustomTask");
 		cButton.setPreferredSize(new Dimension(150,50));
+
+		buttonList = new JPanel();
+		buttonList.add(studyButton);
+		buttonList.add(homeButton);
+		buttonList.add(cButton);
+		
 		
 		taskPanel = new JPanel();
 		this.setTitle("Todos");
@@ -43,12 +48,7 @@ public class MyFrame extends JFrame implements ActionListener{
 		this.setLayout(new BorderLayout());
 		this.setSize(500, 500);
 		this.setVisible(true);
-		
-		//Lägger till 3 knappar i buttonList Panelen
-		buttonList.add(studyButton);
-		buttonList.add(homeButton);
-		buttonList.add(cButton);
-		
+	
 		//vart i framen saken ska ligga i, north är högst upp.
 		this.add(buttonList, BorderLayout.NORTH);
 		this.add(taskPanel);
@@ -65,16 +65,15 @@ public class MyFrame extends JFrame implements ActionListener{
 			Task studyTask = new StudyTask();
 			
 			taskSorter.add(studyTask);
-	
+			
 			//Validerar och renderar om panelen
-			System.out.println(taskSorter);
+			//System.out.println(taskSorter);
 			sortTasks();
 			taskPanel.validate();
 			taskPanel.repaint();
 		}	
 		if(e.getSource()==homeButton) {
-			System.out.print("HUYG(AHY(UI)GFHAUIOSJDFHBAUIO=");
-	
+			
 			//Samma som för studyButton
 			Task homeTask = new HomeTask();
 			taskSorter.add(homeTask);
@@ -97,4 +96,20 @@ public class MyFrame extends JFrame implements ActionListener{
 		}
 	}
 
+
+	
+	public JButton studyButton() {
+		studyButton = new JButton("studyTask");
+		studyButton.setPreferredSize(new Dimension(150,50));
+		studyButton.addActionListener(this);
+		return studyButton;
+	}
+	
+	public JButton homeButton() {
+		homeButton = new JButton("HomeTask");
+		homeButton.setPreferredSize(new Dimension(150,50));
+		homeButton.addActionListener(this);
+		return homeButton;
+	}
+	
 }
