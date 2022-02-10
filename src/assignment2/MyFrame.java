@@ -11,7 +11,6 @@ import java.util.Comparator;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import se.his.it401g.todo.HomeTask;
@@ -86,10 +85,9 @@ public class MyFrame extends JFrame implements ActionListener{
 			repaintPanel();
 		}
 		
-		String s = (String) filterButton.getSelectedItem();
-		filterSwitch(s);
+		
+		filterSwitch((String) filterButton.getSelectedItem());
 	}
-	
 	
 	public void sortTasks(String sortType) {
 		Collections.sort(taskSorter, new Comparator<Task>() {
@@ -141,7 +139,7 @@ public class MyFrame extends JFrame implements ActionListener{
 			sortTasks("getTaskType");
 			repaintPanel();
 		}else {
-			System.out.println("TaskType");
+			System.out.println("getText");
 			sortTasks("getText");
 			repaintPanel();
 		}
