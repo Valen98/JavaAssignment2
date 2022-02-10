@@ -11,6 +11,7 @@ import java.util.Comparator;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import se.his.it401g.todo.HomeTask;
@@ -23,10 +24,15 @@ public class MyFrame extends JFrame implements ActionListener{
 	JComboBox<String> filterButton;
 	
 	//Panelen är global så att när man skapar med knapparna så läggs de här.
-	JPanel buttonList, taskPanel;
+	JPanel buttonList, taskPanel, progressionPanel;
 
 	ArrayList<Task> taskSorter = new ArrayList<Task>();
 	
+	JLabel progressionLabel;
+	
+	int completed = 0;
+	
+	int notCompleted = 0;
 	MyFrame() {
 		
 		//Study Button
@@ -46,7 +52,6 @@ public class MyFrame extends JFrame implements ActionListener{
 		buttonList.add(cButton);
 		buttonList.add(filterButton);
 		
-		
 		taskPanel = new JPanel();
 		this.setTitle("Todos");
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -54,11 +59,17 @@ public class MyFrame extends JFrame implements ActionListener{
 		this.setSize(500, 500);
 		this.setVisible(true);
 	
+		progressionPanel = new JPanel();
+		
 		//vart i framen saken ska ligga i, north är högst upp.
 		this.add(buttonList, BorderLayout.NORTH);
 		this.add(taskPanel);
 		
+		progressionLabel = new JLabel(completed + " out of " + notCompleted + " tasks");
 		
+		progressionPanel.add(progressionLabel);
+		this.add(progressionPanel, BorderLayout.SOUTH);
+
 		
 	}
 
@@ -74,6 +85,7 @@ public class MyFrame extends JFrame implements ActionListener{
 			//Validerar och renderar om panelen
 			//System.out.println(taskSorter);
 			sortTasks("default");
+			countCompleted(studyTask);
 			repaintPanel();
 		}	
 		if(e.getSource()==homeButton) {
@@ -82,6 +94,7 @@ public class MyFrame extends JFrame implements ActionListener{
 			Task homeTask = new HomeTask();
 			taskSorter.add(homeTask);
 			sortTasks("getTaskType");
+			countCompleted(homeTask);
 			repaintPanel();
 		}
 		
@@ -126,12 +139,11 @@ public class MyFrame extends JFrame implements ActionListener{
 	
 	
 	public JComboBox<String> filterButton() {
-		String[] filterOptions = {"getTaskType", "getTask"};
+		String[] filterOptions = {"getTaskType", "getText"};
 		JComboBox<String> filterButton = new JComboBox<String>(filterOptions);
 		filterButton.addActionListener(this);
 		return filterButton;
 	}
-	
 	
 	public void filterSwitch(String filter) {
 		if(filter.equals("getTaskType")) {
@@ -149,5 +161,19 @@ public class MyFrame extends JFrame implements ActionListener{
 	public void repaintPanel() {
 		taskPanel.validate();
 		taskPanel.repaint();
+	}
+	
+	
+	public void countCompleted(Task task) {
+		if(task.isComplete()) {
+			completed++;
+		}else {
+			notCompleted++;
+		}
+		setCountLabel();
+	}
+	
+	public void setCountLabel() {
+		progressionLabel.setText(completed + " out of " + notCompleted + " tasks");
 	}
 }
