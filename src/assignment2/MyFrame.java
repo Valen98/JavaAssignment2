@@ -9,7 +9,9 @@ import java.util.Collections;
 import java.util.Comparator;
 
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import se.his.it401g.todo.HomeTask;
@@ -18,12 +20,14 @@ import se.his.it401g.todo.Task;
 
 public class MyFrame extends JFrame implements ActionListener{
 	JButton studyButton, homeButton, cButton;
+
+	JComboBox<String> filterButton;
 	
 	//Panelen är global så att när man skapar med knapparna så läggs de här.
 	JPanel buttonList, taskPanel;
 
 	ArrayList<Task> taskSorter = new ArrayList<Task>();
-
+	
 	MyFrame() {
 		
 		//Study Button
@@ -31,15 +35,17 @@ public class MyFrame extends JFrame implements ActionListener{
 		
 		//HomeButton
 		homeButton = homeButton();
+		filterButton = filterButton();
 		
 		//Custom Button
 		cButton = new JButton("CustomTask");
-		cButton.setPreferredSize(new Dimension(150,50));
+		cButton.setPreferredSize(new Dimension(100,50));
 
 		buttonList = new JPanel();
 		buttonList.add(studyButton);
 		buttonList.add(homeButton);
 		buttonList.add(cButton);
+		buttonList.add(filterButton);
 		
 		
 		taskPanel = new JPanel();
@@ -68,26 +74,34 @@ public class MyFrame extends JFrame implements ActionListener{
 			
 			//Validerar och renderar om panelen
 			//System.out.println(taskSorter);
-			sortTasks();
-			taskPanel.validate();
-			taskPanel.repaint();
+			sortTasks("default");
+			repaintPanel();
 		}	
 		if(e.getSource()==homeButton) {
 			
 			//Samma som för studyButton
 			Task homeTask = new HomeTask();
 			taskSorter.add(homeTask);
-			sortTasks();
-			taskPanel.validate();
-			taskPanel.repaint();
+			sortTasks("getTaskType");
+			repaintPanel();
 		}
+		
+		String s = (String) filterButton.getSelectedItem();
+		filterSwitch(s);
 	}
 	
 	
-	public void sortTasks( ) {
+	public void sortTasks(String sortType) {
 		Collections.sort(taskSorter, new Comparator<Task>() {
 			public int compare(Task v1, Task v2) {
-				return v1.getTaskType().compareTo(v2.getTaskType());
+				if(sortType.equals("getText")) {
+					System.out.println("Changed filter");
+					return v1.getText().compareTo(v2.getText());
+					
+				} else {
+					System.out.println("TaskType");
+					return v1.getTaskType().compareTo(v2.getTaskType());
+				}
 			}
 		});
 	
@@ -100,16 +114,42 @@ public class MyFrame extends JFrame implements ActionListener{
 	
 	public JButton studyButton() {
 		studyButton = new JButton("studyTask");
-		studyButton.setPreferredSize(new Dimension(150,50));
+		studyButton.setPreferredSize(new Dimension(100,50));
 		studyButton.addActionListener(this);
 		return studyButton;
 	}
 	
 	public JButton homeButton() {
 		homeButton = new JButton("HomeTask");
-		homeButton.setPreferredSize(new Dimension(150,50));
+		homeButton.setPreferredSize(new Dimension(100,50));
 		homeButton.addActionListener(this);
 		return homeButton;
 	}
 	
+	
+	public JComboBox<String> filterButton() {
+		String[] filterOptions = {"getTaskType", "getTask"};
+		JComboBox<String> filterButton = new JComboBox<String>(filterOptions);
+		filterButton.addActionListener(this);
+		return filterButton;
+	}
+	
+	
+	public void filterSwitch(String filter) {
+		if(filter.equals("getTaskType")) {
+			System.out.println("TaskType");
+			sortTasks("getTaskType");
+			repaintPanel();
+		}else {
+			System.out.println("TaskType");
+			sortTasks("getText");
+			repaintPanel();
+		}
+	}
+	
+	
+	public void repaintPanel() {
+		taskPanel.validate();
+		taskPanel.repaint();
+	}
 }
