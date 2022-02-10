@@ -17,11 +17,14 @@ import javax.swing.JPanel;
 import se.his.it401g.todo.HomeTask;
 import se.his.it401g.todo.StudyTask;
 import se.his.it401g.todo.Task;
+import se.his.it401g.todo.TaskListener;
 
 public class MyFrame extends JFrame implements ActionListener{
 	JButton studyButton, homeButton, cButton;
 
 	JComboBox<String> filterButton;
+	
+	TaskListener homeTaskListener, studyTaskListener;
 	
 	//Panelen är global så att när man skapar med knapparna så läggs de här.
 	JPanel buttonList, taskPanel, progressionPanel;
@@ -40,7 +43,7 @@ public class MyFrame extends JFrame implements ActionListener{
 		
 		//HomeButton
 		homeButton = homeButton();
-		filterButton = filterButton();
+		filterButton = filterCombo();
 		
 		//Custom Button
 		cButton = new JButton("CustomTask");
@@ -93,11 +96,15 @@ public class MyFrame extends JFrame implements ActionListener{
 			//Samma som för studyButton
 			Task homeTask = new HomeTask();
 			taskSorter.add(homeTask);
+			homeTaskListener = homeTask.getTaskListener();
 			sortTasks("getTaskType");
 			countCompleted(homeTask);
 			repaintPanel();
+	
 		}
-		
+		if(e.getSource()==homeTaskListener) {
+			System.out.print("Hi");
+		}
 		
 		filterSwitch((String) filterButton.getSelectedItem());
 	}
@@ -106,11 +113,8 @@ public class MyFrame extends JFrame implements ActionListener{
 		Collections.sort(taskSorter, new Comparator<Task>() {
 			public int compare(Task v1, Task v2) {
 				if(sortType.equals("getText")) {
-					System.out.println("Changed filter");
 					return v1.getText().compareTo(v2.getText());
-					
 				} else {
-					System.out.println("TaskType");
 					return v1.getTaskType().compareTo(v2.getTaskType());
 				}
 			}
@@ -138,7 +142,7 @@ public class MyFrame extends JFrame implements ActionListener{
 	}
 	
 	
-	public JComboBox<String> filterButton() {
+	public JComboBox<String> filterCombo() {
 		String[] filterOptions = {"getTaskType", "getText"};
 		JComboBox<String> filterButton = new JComboBox<String>(filterOptions);
 		filterButton.addActionListener(this);
@@ -147,11 +151,9 @@ public class MyFrame extends JFrame implements ActionListener{
 	
 	public void filterSwitch(String filter) {
 		if(filter.equals("getTaskType")) {
-			System.out.println("TaskType");
 			sortTasks("getTaskType");
 			repaintPanel();
 		}else {
-			System.out.println("getText");
 			sortTasks("getText");
 			repaintPanel();
 		}
