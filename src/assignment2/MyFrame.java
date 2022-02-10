@@ -19,7 +19,12 @@ import se.his.it401g.todo.StudyTask;
 import se.his.it401g.todo.Task;
 import se.his.it401g.todo.TaskListener;
 
-public class MyFrame extends JFrame implements ActionListener{
+public class MyFrame extends JFrame implements ActionListener, TaskListener{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	JButton studyButton, homeButton, cButton;
 
 	JComboBox<String> filterButton;
@@ -95,8 +100,8 @@ public class MyFrame extends JFrame implements ActionListener{
 			
 			//Samma som för studyButton
 			Task homeTask = new HomeTask();
+			homeTask.setTaskListener(this);
 			taskSorter.add(homeTask);
-			homeTaskListener = homeTask.getTaskListener();
 			sortTasks("getTaskType");
 			countCompleted(homeTask);
 			repaintPanel();
@@ -177,5 +182,35 @@ public class MyFrame extends JFrame implements ActionListener{
 	
 	public void setCountLabel() {
 		progressionLabel.setText(completed + " out of " + notCompleted + " tasks");
+	}
+
+	@Override
+	public void taskChanged(Task t) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void taskCompleted(Task t) {
+		System.out.print("Test");
+		
+	}
+
+	@Override
+	public void taskUncompleted(Task t) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void taskCreated(Task t) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void taskRemoved(Task t) {
+		// TODO Auto-generated method stub
+		
 	}
 }
