@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -66,14 +67,14 @@ public class MyFrame extends JFrame implements ActionListener, TaskListener{
 		this.setLayout(new BorderLayout());
 		this.setSize(500, 500);
 		this.setVisible(true);
-	
+		
 		progressionPanel = new JPanel();
 		
 		//vart i framen saken ska ligga i, north är högst upp.
 		this.add(buttonList, BorderLayout.NORTH);
 		this.add(taskPanel);
 		
-		progressionLabel = new JLabel(completed + " out of " + notCompleted + " tasks");
+		progressionLabel = new JLabel(completed + " out of " + notCompleted + " task completed");
 		
 		progressionPanel.add(progressionLabel);
 		this.add(progressionPanel, BorderLayout.SOUTH);
@@ -87,24 +88,20 @@ public class MyFrame extends JFrame implements ActionListener, TaskListener{
 			
 			//När knappen trycks så skapas en ny instans av task
 			Task studyTask = new StudyTask();
-			
-			taskSorter.add(studyTask);
-			
+			studyTask.setTaskListener(this);
+			taskCreated(studyTask);
 			//Validerar och renderar om panelen
 			//System.out.println(taskSorter);
 			sortTasks("default");
-			countCompleted(studyTask);
-			repaintPanel();
 		}	
 		if(e.getSource()==homeButton) {
 			
 			//Samma som för studyButton
 			Task homeTask = new HomeTask();
 			homeTask.setTaskListener(this);
-			taskSorter.add(homeTask);
+			taskCreated(homeTask);
+
 			sortTasks("getTaskType");
-			countCompleted(homeTask);
-			repaintPanel();
 	
 		}
 		if(e.getSource()==homeTaskListener) {
@@ -119,7 +116,10 @@ public class MyFrame extends JFrame implements ActionListener, TaskListener{
 			public int compare(Task v1, Task v2) {
 				if(sortType.equals("getText")) {
 					return v1.getText().compareTo(v2.getText());
-				} else {
+				}else if (sortType.equals("getCompleted")) {
+					return Boolean.compare(v2.isComplete(), v1.isComplete());
+				}
+				else {
 					return v1.getTaskType().compareTo(v2.getTaskType());
 				}
 			}
@@ -128,6 +128,7 @@ public class MyFrame extends JFrame implements ActionListener, TaskListener{
 		for(int i = 0; i < taskSorter.size(); i++) {
 			taskPanel.add(taskSorter.get(i).getGuiComponent());
 		}
+		repaintPanel();
 	}
 
 
@@ -148,7 +149,7 @@ public class MyFrame extends JFrame implements ActionListener, TaskListener{
 	
 	
 	public JComboBox<String> filterCombo() {
-		String[] filterOptions = {"getTaskType", "getText"};
+		String[] filterOptions = {"getTaskType", "getText", "getCompleted"};
 		JComboBox<String> filterButton = new JComboBox<String>(filterOptions);
 		filterButton.addActionListener(this);
 		return filterButton;
@@ -158,7 +159,11 @@ public class MyFrame extends JFrame implements ActionListener, TaskListener{
 		if(filter.equals("getTaskType")) {
 			sortTasks("getTaskType");
 			repaintPanel();
-		}else {
+		} else if(filter.equals("getCompleted") ) {
+			sortTasks("getCompleted");
+			repaintPanel();
+		}
+		else {
 			sortTasks("getText");
 			repaintPanel();
 		}
@@ -170,18 +175,23 @@ public class MyFrame extends JFrame implements ActionListener, TaskListener{
 		taskPanel.repaint();
 	}
 	
-	
-	public void countCompleted(Task task) {
-		if(task.isComplete()) {
-			completed++;
-		}else {
-			notCompleted++;
+	public void removeTaskPanel() {
+		taskPanel.removeAll();
+		taskPanel.validate();
+		taskPanel.repaint();
+		for(int i = 0; i < taskSorter.size(); i++) {
+			taskPanel.add(taskSorter.get(i).getGuiComponent());
 		}
-		setCountLabel();
+		taskPanel.revalidate();
 	}
 	
 	public void setCountLabel() {
-		progressionLabel.setText(completed + " out of " + notCompleted + " tasks");
+		if(notCompleted < 2) {
+			progressionLabel.setText(completed + " out of " + notCompleted + " task completed");
+			
+		}else {
+			progressionLabel.setText(completed + " out of " + notCompleted + " tasks completed");
+		}
 	}
 
 	@Override
@@ -192,25 +202,31 @@ public class MyFrame extends JFrame implements ActionListener, TaskListener{
 
 	@Override
 	public void taskCompleted(Task t) {
-		System.out.print("Test");
+		completed++;
+		System.out.print(completed);
+		setCountLabel();
 		
 	}
 
 	@Override
 	public void taskUncompleted(Task t) {
-		// TODO Auto-generated method stub
-		
+		completed -= 1;
+		setCountLabel();
 	}
 
 	@Override
 	public void taskCreated(Task t) {
-		// TODO Auto-generated method stub
-		
+		taskSorter.add(t);
+		notCompleted++;
+		setCountLabel();
 	}
 
 	@Override
 	public void taskRemoved(Task t) {
-		// TODO Auto-generated method stub
-		
+		taskSorter.remove(t);
+		System.out.println(taskSorter.size());
+		notCompleted -= 1;
+		setCountLabel();
+		removeTaskPanel();
 	}
 }
