@@ -26,7 +26,7 @@ public class MyFrame extends JFrame implements ActionListener, TaskListener{
 	 */
 	private static final long serialVersionUID = 1L;
 
-	JButton studyButton, homeButton, cButton;
+	JButton studyButton, homeButton, whiskeyButton;
 
 	JComboBox<String> filterButton;
 	
@@ -49,16 +49,18 @@ public class MyFrame extends JFrame implements ActionListener, TaskListener{
 		
 		//HomeButton
 		homeButton = homeButton();
+		
+		//whiskeyButton
+		whiskeyButton = whiskeyButton();
+		
 		filterButton = filterCombo();
 		
-		//Custom Button
-		cButton = new JButton("CustomTask");
-		cButton.setPreferredSize(new Dimension(100,50));
+
 
 		buttonList = new JPanel();
 		buttonList.add(studyButton);
 		buttonList.add(homeButton);
-		buttonList.add(cButton);
+		buttonList.add(whiskeyButton);
 		buttonList.add(filterButton);
 		
 		taskPanel = new JPanel();
@@ -104,8 +106,14 @@ public class MyFrame extends JFrame implements ActionListener, TaskListener{
 			sortTasks("getTaskType");
 	
 		}
-		if(e.getSource()==homeTaskListener) {
-			System.out.print("Hi");
+		if(e.getSource()==whiskeyButton) {
+			System.out.println("HI Whiskey");
+			Task whiskey = new Whiskey();
+			whiskey.setTaskListener(this);
+			
+			taskCreated(whiskey);
+			
+			sortTasks("Default");
 		}
 		
 		filterSwitch((String) filterButton.getSelectedItem());
@@ -146,7 +154,14 @@ public class MyFrame extends JFrame implements ActionListener, TaskListener{
 		homeButton.addActionListener(this);
 		return homeButton;
 	}
-	
+	public JButton whiskeyButton() {
+		//Custom Button
+		whiskeyButton = new JButton("Whiskey");
+		whiskeyButton.setPreferredSize(new Dimension(100,50));
+		whiskeyButton.addActionListener(this);
+		return whiskeyButton;
+	}
+
 	
 	public JComboBox<String> filterCombo() {
 		String[] filterOptions = {"getTaskType", "getText", "getCompleted"};
