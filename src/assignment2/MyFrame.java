@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -26,7 +25,7 @@ public class MyFrame extends JFrame implements ActionListener, TaskListener{
 	 */
 	private static final long serialVersionUID = 1L;
 
-	JButton studyButton, homeButton, whiskeyButton;
+	JButton studyButton, homeButton, tvShowButton;
 
 	JComboBox<String> filterButton;
 	
@@ -50,8 +49,8 @@ public class MyFrame extends JFrame implements ActionListener, TaskListener{
 		//HomeButton
 		homeButton = homeButton();
 		
-		//whiskeyButton
-		whiskeyButton = whiskeyButton();
+		//tvShowButton
+		tvShowButton = tvShowButton();
 		
 		filterButton = filterCombo();
 		
@@ -60,7 +59,7 @@ public class MyFrame extends JFrame implements ActionListener, TaskListener{
 		buttonList = new JPanel();
 		buttonList.add(studyButton);
 		buttonList.add(homeButton);
-		buttonList.add(whiskeyButton);
+		buttonList.add(tvShowButton);
 		buttonList.add(filterButton);
 		
 		taskPanel = new JPanel();
@@ -87,44 +86,56 @@ public class MyFrame extends JFrame implements ActionListener, TaskListener{
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource()==studyButton) {
-			
-			//När knappen trycks så skapas en ny instans av task
-			Task studyTask = new StudyTask();
-			studyTask.setTaskListener(this);
-			taskCreated(studyTask);
-			//Validerar och renderar om panelen
-			//System.out.println(taskSorter);
-			sortTasks("default");
+			try {
+				//När knappen trycks så skapas en ny instans av task
+				Task studyTask = new StudyTask();
+				studyTask.setTaskListener(this);
+				taskCreated(studyTask);
+				//Validerar och renderar om panelen
+				//System.out.println(taskSorter);
+				sortTasks("default");
+				
+			}catch(Exception error) {
+				System.out.println("Could not create study task");
+			}
 		}	
 		if(e.getSource()==homeButton) {
-			
-			//Samma som för studyButton
-			Task homeTask = new HomeTask();
-			homeTask.setTaskListener(this);
-			taskCreated(homeTask);
-
-			sortTasks("getTaskType");
-	
+			try {
+				//Samma som för studyButton
+				Task homeTask = new HomeTask();
+				homeTask.setTaskListener(this);
+				taskCreated(homeTask);
+				
+				sortTasks("Task type");
+				
+			}catch(Exception error) {
+				System.out.println("Could not create home task");
+			}
 		}
-		if(e.getSource()==whiskeyButton) {
-			System.out.println("HI Whiskey");
-			Task whiskey = new Whiskey();
-			whiskey.setTaskListener(this);
-			
-			taskCreated(whiskey);
-			
-			sortTasks("Default");
+		if(e.getSource()==tvShowButton) {
+			try {
+				Task tvShow = new TvShows();
+				tvShow.setTaskListener(this);
+				
+				taskCreated(tvShow);
+				
+				sortTasks("Default");
+				
+			}catch (Exception error) {
+				System.out.println("Could not create Tv shows");
+			}
 		}
 		
 		filterSwitch((String) filterButton.getSelectedItem());
 	}
 	
+	//sortTasks method sorts the ArrayList of taskSorter by the compare 
 	public void sortTasks(String sortType) {
 		Collections.sort(taskSorter, new Comparator<Task>() {
 			public int compare(Task v1, Task v2) {
-				if(sortType.equals("getText")) {
+				if(sortType.equals("Text")) {
 					return v1.getText().compareTo(v2.getText());
-				}else if (sortType.equals("getCompleted")) {
+				}else if (sortType.equals("Completed")) {
 					return Boolean.compare(v2.isComplete(), v1.isComplete());
 				}
 				else {
@@ -154,52 +165,41 @@ public class MyFrame extends JFrame implements ActionListener, TaskListener{
 		homeButton.addActionListener(this);
 		return homeButton;
 	}
-	public JButton whiskeyButton() {
+	public JButton tvShowButton() {
 		//Custom Button
-		whiskeyButton = new JButton("Whiskey");
-		whiskeyButton.setPreferredSize(new Dimension(100,50));
-		whiskeyButton.addActionListener(this);
-		return whiskeyButton;
+		tvShowButton = new JButton("Tv Shows");
+		tvShowButton.setPreferredSize(new Dimension(100,50));
+		tvShowButton.addActionListener(this);
+		return tvShowButton;
 	}
 
 	
 	public JComboBox<String> filterCombo() {
-		String[] filterOptions = {"getTaskType", "getText", "getCompleted"};
+		String[] filterOptions = {"Filter by:","Task type", "Text", "Completed"};
 		JComboBox<String> filterButton = new JComboBox<String>(filterOptions);
 		filterButton.addActionListener(this);
 		return filterButton;
 	}
-	
+	//This method is used to check what the sortTask should sort on.
 	public void filterSwitch(String filter) {
-		if(filter.equals("getTaskType")) {
-			sortTasks("getTaskType");
-			repaintPanel();
-		} else if(filter.equals("getCompleted") ) {
-			sortTasks("getCompleted");
-			repaintPanel();
+		if(filter.equals("Task type")) {
+			sortTasks("Task type");
+		} else if(filter.equals("Completed") ) {
+			sortTasks("Completed");
 		}
 		else {
-			sortTasks("getText");
-			repaintPanel();
+			sortTasks("Text");
 		}
 	}
 	
-	
+	//Method to repaint the taskPanel.
 	public void repaintPanel() {
 		taskPanel.validate();
 		taskPanel.repaint();
 	}
 	
-	public void removeTaskPanel() {
-		taskPanel.removeAll();
-		taskPanel.validate();
-		taskPanel.repaint();
-		for(int i = 0; i < taskSorter.size(); i++) {
-			taskPanel.add(taskSorter.get(i).getGuiComponent());
-		}
-		taskPanel.revalidate();
-	}
-	
+
+	//This is the progressionLabel and it updates when a task is created and/or deleted.
 	public void setCountLabel() {
 		if(notCompleted < 2) {
 			progressionLabel.setText(completed + " out of " + notCompleted + " task completed");
@@ -211,8 +211,7 @@ public class MyFrame extends JFrame implements ActionListener, TaskListener{
 
 	@Override
 	public void taskChanged(Task t) {
-		// TODO Auto-generated method stub
-		
+		repaintPanel();
 	}
 
 	@Override
@@ -236,6 +235,7 @@ public class MyFrame extends JFrame implements ActionListener, TaskListener{
 		setCountLabel();
 	}
 
+	//taskRemoved takes the current task and remove it from the array list, remove notCompleted and updates setCountLabel and calls for removeTaskPanel
 	@Override
 	public void taskRemoved(Task t) {
 		taskSorter.remove(t);
@@ -243,5 +243,22 @@ public class MyFrame extends JFrame implements ActionListener, TaskListener{
 		notCompleted -= 1;
 		setCountLabel();
 		removeTaskPanel();
+	}
+	
+	
+	//This method is used to remove the current panel and repaint it. Otherwise the panel wont update when its removed.
+	public void removeTaskPanel() {
+		try {
+			taskPanel.removeAll();
+			taskPanel.validate();
+			taskPanel.repaint();
+			for(int i = 0; i < taskSorter.size(); i++) {
+				taskPanel.add(taskSorter.get(i).getGuiComponent());
+			}
+			taskPanel.revalidate();
+			
+		}catch (Exception error) {
+			System.out.println("Could not remove task");
+		}
 	}
 }
