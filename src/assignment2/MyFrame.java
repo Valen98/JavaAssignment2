@@ -242,6 +242,9 @@ public class MyFrame extends JFrame implements ActionListener, TaskListener{
 		taskSorter.remove(t);
 		System.out.println(taskSorter.size());
 		notCompleted -= 1;
+		if(t.isComplete()) {
+			completed -= 1;
+		}
 		setCountLabel();
 		removeTaskPanel();
 	}
