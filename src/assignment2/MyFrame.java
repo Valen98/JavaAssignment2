@@ -38,9 +38,13 @@ public class MyFrame extends JFrame implements ActionListener, TaskListener{
 	
 	JLabel progressionLabel;
 	
+	//Counts if the task is marked as complete
 	int completed = 0;
 	
+	//Counts how many tasks there are in total
 	int notCompleted = 0;
+	
+	//This is the main frame of the program
 	MyFrame() {
 		
 		//Study Button
@@ -54,8 +58,6 @@ public class MyFrame extends JFrame implements ActionListener, TaskListener{
 		
 		filterButton = filterCombo();
 		
-
-
 		buttonList = new JPanel();
 		buttonList.add(studyButton);
 		buttonList.add(homeButton);
@@ -79,8 +81,6 @@ public class MyFrame extends JFrame implements ActionListener, TaskListener{
 		
 		progressionPanel.add(progressionLabel);
 		this.add(progressionPanel, BorderLayout.SOUTH);
-
-		
 	}
 
 	@Override
@@ -134,7 +134,8 @@ public class MyFrame extends JFrame implements ActionListener, TaskListener{
 		Collections.sort(taskSorter, new Comparator<Task>() {
 			public int compare(Task v1, Task v2) {
 				if(sortType.equals("Text")) {
-					return v1.getText().compareTo(v2.getText());
+					//toLowerCase() because Java sort capitalized letters over non-capitalized 
+					return v1.getText().toLowerCase().compareTo(v2.getText().toLowerCase());
 				}else if (sortType.equals("Completed")) {
 					return Boolean.compare(v2.isComplete(), v1.isComplete());
 				}
