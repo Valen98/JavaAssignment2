@@ -25,24 +25,24 @@ public class MyFrame extends JFrame implements ActionListener, TaskListener{
 	 */
 	private static final long serialVersionUID = 1L;
 
-	JButton studyButton, homeButton, tvShowButton;
+	private JButton studyButton, homeButton, tvShowButton;
 
-	JComboBox<String> filterButton;
+	private JComboBox<String> filterButton;
 	
-	TaskListener homeTaskListener, studyTaskListener;
+	private TaskListener homeTaskListener, studyTaskListener;
 	
 	//Panelen är global så att när man skapar med knapparna så läggs de här.
-	JPanel buttonList, taskPanel, progressionPanel;
+	private JPanel buttonList, taskPanel, progressionPanel;
 
-	ArrayList<Task> taskSorter = new ArrayList<Task>();
+	private ArrayList<Task> taskSorter = new ArrayList<Task>();
 	
-	JLabel progressionLabel;
+	private JLabel progressionLabel;
 	
 	//Counts if the task is marked as complete
-	int completed = 0;
+	private int completed = 0;
 	
 	//Counts how many tasks there are in total
-	int notCompleted = 0;
+	private int notCompleted = 0;
 	
 	//This is the main frame of the program
 	MyFrame() {
@@ -56,52 +56,61 @@ public class MyFrame extends JFrame implements ActionListener, TaskListener{
 		//tvShowButton
 		tvShowButton = tvShowButton();
 		
+		//FilterButton
 		filterButton = filterCombo();
 		
+		//Adds all buttons to the JPanel
 		buttonList = new JPanel();
 		buttonList.add(studyButton);
 		buttonList.add(homeButton);
 		buttonList.add(tvShowButton);
 		buttonList.add(filterButton);
 		
-		taskPanel = new JPanel();
+		//Creates the JPanle, names it and also adds a size.
+		tas
+		kPanel = new JPanel();
 		this.setTitle("Todos");
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setLayout(new BorderLayout());
 		this.setSize(500, 500);
 		this.setVisible(true);
 		
+		//Creates the part in the JPanel that shows how many tasks are made and done
 		progressionPanel = new JPanel();
 		
-		//vart i framen saken ska ligga i, north är högst upp.
+		//Where in the frame that this is placed, north is at the top of the frame.
 		this.add(buttonList, BorderLayout.NORTH);
 		this.add(taskPanel);
 		
+		//What will be said in the progressionPanel
 		progressionLabel = new JLabel(completed + " out of " + notCompleted + " task completed");
 		
+		//adds a location to the progressionPanel
 		progressionPanel.add(progressionLabel);
 		this.add(progressionPanel, BorderLayout.SOUTH);
 	}
 
 	@Override
+	//Cheacks if the buttons are used as well as keeps the information what will happen if they are pressed or other wise used.
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource()==studyButton) {
 			try {
-				//När knappen trycks så skapas en ny instans av task
+				//When the button is pressed down a new instace of a task created
 				Task studyTask = new StudyTask();
 				studyTask.setTaskListener(this);
 				taskCreated(studyTask);
-				//Validerar och renderar om panelen
+				//Validates and renders the frame again
 				//System.out.println(taskSorter);
 				sortTasks("default");
 				
 			}catch(Exception error) {
+				//Prints out a error message if the task couldn't be created.
 				System.out.println("Could not create study task");
 			}
 		}	
 		if(e.getSource()==homeButton) {
 			try {
-				//Samma som för studyButton
+				//Same as for the studyButton
 				Task homeTask = new HomeTask();
 				homeTask.setTaskListener(this);
 				taskCreated(homeTask);
@@ -114,6 +123,7 @@ public class MyFrame extends JFrame implements ActionListener, TaskListener{
 		}
 		if(e.getSource()==tvShowButton) {
 			try {
+				//Same as for the studyButton
 				Task tvShow = new TvShows();
 				tvShow.setTaskListener(this);
 				
@@ -126,6 +136,7 @@ public class MyFrame extends JFrame implements ActionListener, TaskListener{
 			}
 		}
 		
+		//Uses the filterSwitch method to choose what you sort after also changes depending on what is chosen
 		filterSwitch((String) filterButton.getSelectedItem());
 	}
 	
@@ -145,6 +156,7 @@ public class MyFrame extends JFrame implements ActionListener, TaskListener{
 			}
 		});
 	
+		//
 		for(int i = 0; i < taskSorter.size(); i++) {
 			taskPanel.add(taskSorter.get(i).getGuiComponent());
 		}
@@ -152,20 +164,24 @@ public class MyFrame extends JFrame implements ActionListener, TaskListener{
 	}
 
 
-	
+	//Creates the studyButton on the frame that you can press to create a task
 	public JButton studyButton() {
+		//Name on the Button
 		studyButton = new JButton("studyTask");
+		//Size of the button
 		studyButton.setPreferredSize(new Dimension(100,50));
+		//Makes sure that it listens if it is pressed
 		studyButton.addActionListener(this);
 		return studyButton;
 	}
-	
+	//Same as for the studyButton
 	public JButton homeButton() {
 		homeButton = new JButton("HomeTask");
 		homeButton.setPreferredSize(new Dimension(100,50));
 		homeButton.addActionListener(this);
 		return homeButton;
 	}
+	//Same as for studyButton
 	public JButton tvShowButton() {
 		//Custom Button
 		tvShowButton = new JButton("Tv Shows");
@@ -174,7 +190,7 @@ public class MyFrame extends JFrame implements ActionListener, TaskListener{
 		return tvShowButton;
 	}
 
-	
+	//Creates the options for the filter so that it can see what the difference.
 	public JComboBox<String> filterCombo() {
 		String[] filterOptions = {"Filter by:","Task type", "Text", "Completed"};
 		JComboBox<String> filterButton = new JComboBox<String>(filterOptions);
@@ -211,11 +227,13 @@ public class MyFrame extends JFrame implements ActionListener, TaskListener{
 	}
 
 	@Override
+	//Repaints frame if the task changed
 	public void taskChanged(Task t) {
 		repaintPanel();
 	}
 
 	@Override
+	//If a task is marked as complete it will be added to the completed variable
 	public void taskCompleted(Task t) {
 		completed++;
 		System.out.print(completed);
@@ -224,12 +242,14 @@ public class MyFrame extends JFrame implements ActionListener, TaskListener{
 	}
 
 	@Override
+	//changes the task completed variable if one is removed
 	public void taskUncompleted(Task t) {
 		completed -= 1;
 		setCountLabel();
 	}
 
 	@Override
+	//Adds a task to the sorter and also to the progressbar when one is created
 	public void taskCreated(Task t) {
 		taskSorter.add(t);
 		notCompleted++;
