@@ -22,45 +22,46 @@ public class TvShows extends JPanel implements Task {
 	private JLabel textLabel;
 	JCheckBox completed = new JCheckBox();
 	private JPanel gradeRemovePanel;
-	private JComboBox<String> tvShowGrade;
-	
+	private JComboBox<String> tvShowGenre;
+
 	private TaskListener listener;
+
 	public TvShows() {
 		super(new BorderLayout());
+		//Default value for the input field.
 		this.text = new JTextField("Tv show to watch", 16);
 		this.textLabel = new JLabel();
 		JPanel center = new JPanel();
-		
+
 		center.add(text);
 		center.add(textLabel);
 		this.add(center);
-		
+
 		TaskInputListener inputListener = new TaskInputListener(this, text, textLabel);
 		this.text.addKeyListener(inputListener);
 		this.textLabel.addMouseListener(inputListener);
-		
-		
+
 		JButton remove = new JButton("Remove");
 		remove.addActionListener(inputListener);
-		
-		tvShowGrade = tvShowGrade();
-		
-		this.add(completed,BorderLayout.WEST);
+
+		tvShowGenre = tvShowGenre();
+
+		this.add(completed, BorderLayout.WEST);
 		completed.addItemListener(inputListener);
-		
+		//gradeRemovePanel groups the remove button and grade drop down menu otherwise it will override each other 
 		gradeRemovePanel = new JPanel();
-		gradeRemovePanel.setLayout(new BorderLayout(3,1));
-		
+		gradeRemovePanel.setLayout(new BorderLayout(3, 1));
+
 		gradeRemovePanel.add(remove, BorderLayout.EAST);
-		
-		gradeRemovePanel.add(tvShowGrade, BorderLayout.WEST);
-		
-		
+
+		gradeRemovePanel.add(tvShowGenre, BorderLayout.WEST);
+
 		this.add(gradeRemovePanel, BorderLayout.EAST);
-		
-		setMaximumSize(new Dimension(1000,50));
+
+		setMaximumSize(new Dimension(1000, 50));
 		setBorder(new TitledBorder(getTaskType()));
 	}
+
 	@Override
 	public String getText() {
 		return text.getText();
@@ -74,7 +75,7 @@ public class TvShows extends JPanel implements Task {
 	@Override
 	public void setTaskListener(TaskListener t) {
 		listener = t;
-		
+
 	}
 
 	@Override
@@ -91,10 +92,9 @@ public class TvShows extends JPanel implements Task {
 	public Component getGuiComponent() {
 		return this;
 	}
-
-	
-	public JComboBox<String> tvShowGrade() {
-		String[] gradeOptions = {"Genre","Drama","Action","Thriller","Comedy","Adventure","Western", "Horror"};
+	//Drop down menu for tv show genre
+	public JComboBox<String> tvShowGenre() {
+		String[] gradeOptions = { "Genre", "Drama", "Action", "Thriller", "Comedy", "Adventure", "Western", "Horror" };
 		JComboBox<String> gradeButton = new JComboBox<String>(gradeOptions);
 		return gradeButton;
 	}
