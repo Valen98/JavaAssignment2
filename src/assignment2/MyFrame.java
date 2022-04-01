@@ -8,11 +8,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 import se.his.it401g.todo.HomeTask;
 import se.his.it401g.todo.StudyTask;
@@ -25,11 +27,11 @@ public class MyFrame extends JFrame implements ActionListener, TaskListener {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	// Declaring the variables and initiate the Class
+	// Declaring the variables and initiate the Classes
 
 	private JButton studyButton, homeButton, tvShowButton;
 
-	private JComboBox<String> filterButton;
+	private JComboBox<String> sortButton;
 
 	TaskListener homeTaskListener, studyTaskListener;
 
@@ -47,28 +49,19 @@ public class MyFrame extends JFrame implements ActionListener, TaskListener {
 
 	// This is the main frame of the program
 	MyFrame() {
-
-		// StudyButton
-		studyButton = studyButton();
-
-		// HomeButton
-		homeButton = homeButton();
-
-		// tvShowButton
-		tvShowButton = tvShowButton();
-
-		filterButton = filterCombo();
-
 		// Creates buttonListPanel and adds all buttons to the Panel
 
 		buttonList = new JPanel();
-		buttonList.add(studyButton);
-		buttonList.add(homeButton);
-		buttonList.add(tvShowButton);
-		buttonList.add(filterButton);
+		buttonList.add(studyButton());
+		buttonList.add(homeButton());
+		buttonList.add(tvShowButton());
+		buttonList.add(sortButton = sortCombo());
 
 		// This is the panel for all the tasks
 		taskPanel = new JPanel();
+		taskPanel.setLayout(new BoxLayout(taskPanel, BoxLayout.Y_AXIS));
+		JScrollPane scrollPanel = new JScrollPane(taskPanel);
+		scrollPanel.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
 		this.setTitle("Todos");
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -81,7 +74,7 @@ public class MyFrame extends JFrame implements ActionListener, TaskListener {
 
 		// Adds the JPanels to the MyFrame
 		this.add(buttonList, BorderLayout.NORTH);
-		this.add(taskPanel);
+		this.add(scrollPanel);
 
 		progressionLabel = new JLabel(completed + " out of " + notCompleted + " task completed");
 
@@ -90,7 +83,7 @@ public class MyFrame extends JFrame implements ActionListener, TaskListener {
 	}
 
 	@Override
-	// Cheacks if the buttons are used as well as keeps the information what will
+	// Checks if the buttons are used as well as keeps the information what will
 	// happen if they are pressed or other wise used.
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == studyButton) {
@@ -133,10 +126,10 @@ public class MyFrame extends JFrame implements ActionListener, TaskListener {
 				System.out.println("Could not create Tv shows");
 			}
 		}
-		// Calls the filterSwitch function and sends in the values into filterSwitch
-		// (filterButton.getSelectedItem());
+		// Calls the sortSwitch function and sends in the values into sortSwitch
+		// (sortButton.getSelectedItem());
 
-		filterSwitch((String) filterButton.getSelectedItem());
+		sortSwitch((String) sortButton.getSelectedItem());
 	}
 
 	// sortTasks method sorts the ArrayList of taskSorter by the compare
@@ -154,8 +147,8 @@ public class MyFrame extends JFrame implements ActionListener, TaskListener {
 			}
 		});
 
-		for (int i = 0; i < taskSorter.size(); i++) {
-			taskPanel.add(taskSorter.get(i).getGuiComponent());
+		for (Task i : taskSorter) {
+			taskPanel.add(i.getGuiComponent());
 		}
 		repaintPanel();
 	}
@@ -186,21 +179,21 @@ public class MyFrame extends JFrame implements ActionListener, TaskListener {
 		return tvShowButton;
 	}
 
-	// The values for the JComboBox is an array and "filter by:" is the default
-	// value. the function creates a drop down menu for filter
+	// The values for the JComboBox is an array and "sort by:" is the default
+	// value. the function creates a drop down menu for sort
 
-	public JComboBox<String> filterCombo() {
-		String[] filterOptions = { "Filter by:", "Task type", "Text", "Completed" };
-		JComboBox<String> filterButton = new JComboBox<String>(filterOptions);
-		filterButton.addActionListener(this);
-		return filterButton;
+	public JComboBox<String> sortCombo() {
+		String[] sortOptions = { "Filter by:", "Task type", "Text", "Completed" };
+		JComboBox<String> sortButton = new JComboBox<String>(sortOptions);
+		sortButton.addActionListener(this);
+		return sortButton;
 	}
 
 	// This method is used to check what the sortTask should sort on.
-	public void filterSwitch(String filter) {
-		if (filter.equals("Task type")) {
+	public void sortSwitch(String sort) {
+		if (sort.equals("Task type")) {
 			sortTasks("Task type");
-		} else if (filter.equals("Completed")) {
+		} else if (sort.equals("Completed")) {
 			sortTasks("Completed");
 		} else {
 			sortTasks("Text");
@@ -277,8 +270,8 @@ public class MyFrame extends JFrame implements ActionListener, TaskListener {
 			taskPanel.removeAll();
 			taskPanel.validate();
 			taskPanel.repaint();
-			for (int i = 0; i < taskSorter.size(); i++) {
-				taskPanel.add(taskSorter.get(i).getGuiComponent());
+			for (Task i : taskSorter) {
+				taskPanel.add(i.getGuiComponent());
 			}
 			taskPanel.revalidate();
 
