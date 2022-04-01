@@ -227,7 +227,6 @@ public class MyFrame extends JFrame implements ActionListener, TaskListener {
 	// If a task is marked as complete it will be added to the completed variable
 	public void taskCompleted(Task t) {
 		completed++;
-		System.out.print(completed);
 		setCountLabel();
 
 	}
